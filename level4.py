@@ -8,14 +8,15 @@
 import urllib.request
 import re
 
+BASE_URL = "http://www.pythonchallenge.com/pc/def/linkedlist.php"
+MESSAGE = "Yes. Divide by two and keep going."
+
 
 def main():
     """Main function"""
 
     # Find the first link
-    base_url = "http://www.pythonchallenge.com/pc/def/linkedlist.php"
-    html = urllib.request.urlopen(base_url).read()
-
+    html = urllib.request.urlopen(BASE_URL).read()
     ptn_first = re.compile(r'a href=".+?(\d{,5})"')
     matches = ptn_first.findall(html.decode('utf-8'))
     print("nothing=" + matches[0])
@@ -23,12 +24,18 @@ def main():
     # Repeat find link and jump to it
     ptn = re.compile(r'(\d+)$')
     if matches:
+        num = matches[0]
         while True:
-            html = urllib.request.urlopen(base_url + '?nothing=' + matches[0]).read()
+            html = urllib.request.urlopen(BASE_URL + '?nothing=' + num).read()
             matches = ptn.findall(html.decode('utf-8'))
-            if not matches:
+            if html.decode('utf-8') == MESSAGE:
+                print(html.decode('utf-8'))
+                num = str(int(num)//2)
+            elif not matches:
                 break
-            print("=> nothing=" + matches[0])
+            else:
+                num = matches[0]
+            print("=> nothing=" + num)
     print(html.decode('utf-8'))
 
 
